@@ -460,16 +460,6 @@ collected instrument data can show. Any conclusions about current or recent prod
 should not be drawn from this dataset.
 </div>
 
-<div class="methodology">
-<strong>How to determine exact total production:</strong> Because Hamilton assigns serial numbers
-sequentially, the serial number on the most recently manufactured STAR system <em>is</em> the total
-production count. Our highest observed serial is <strong>H230</strong> (ordinal 7,230, installed
-{date_end}), meaning at least ~7,230 letter-prefix units had been produced by that date.
-To get today's number, find the serial on any recently shipped or installed STAR — convert the
-letter to its position (A=0, B=1, ... H=7), multiply by 1,000, and add the three-digit number.
-That figure is Hamilton's total Microlab STAR production to date. No modeling required.
-</div>
-
 <div class="two-era">
   <div class="era-box pre">
     <h3 style="color:#1565C0;">Era 1: Pre-{bp_label}</h3>
@@ -642,6 +632,46 @@ excluded from regression for the same reason.
       Hamilton almost certainly continued manufacturing STAR systems after {date_end.year}. This
       analysis cannot speak to production volumes in {date_end.year + 1}–present.</li>
 </ul>
+
+<!-- ============================================================ -->
+<h2>Next Step: Determining Exact Total Production</h2>
+
+<p>The analysis above estimates production rates and trends, but the serial numbering system
+makes it possible to determine <strong>exact total production</strong> with a single data point.</p>
+
+<div class="methodology">
+<strong>Key insight:</strong> Because Hamilton assigns Microlab STAR serial numbers sequentially,
+the serial number on the most recently manufactured system <em>is</em> the total production count
+for the letter-prefix series.
+</div>
+
+<p><strong>What we know from this dataset:</strong></p>
+<ul>
+  <li>Our highest observed letter-prefix serial is <strong>H230</strong> (installed {date_end.strftime('%B %Y')})</li>
+  <li>Converting to ordinal: H = 7 (8th letter, zero-indexed) &times; 1,000 + 230 = <strong>7,230</strong></li>
+  <li>This means at least <strong>~7,230 letter-prefix STAR units</strong> had been produced by early {date_end.year}</li>
+  <li>At the post-inflection rate of ~{pw['slope_post']:.0f} units/year, an additional ~{pw['slope_post'] * (datetime.now().year - date_end.year):,.0f} units
+      may have been produced since then — but this is extrapolation, not confirmed</li>
+</ul>
+
+<p><strong>How to get the definitive number:</strong></p>
+<ul>
+  <li>Find the serial number on <strong>any recently shipped or installed</strong> Hamilton Microlab STAR</li>
+  <li>The serial will be in the format <em>Letter + 3 digits</em> (e.g., J450, K112)</li>
+  <li>Convert the letter to its zero-indexed position: A=0, B=1, C=2, D=3, E=4, F=5, G=6, H=7, I=8, J=9, K=10, etc.</li>
+  <li>Multiply by 1,000 and add the three-digit number</li>
+  <li>Example: a serial of <strong>J450</strong> would mean 9 &times; 1,000 + 450 = <strong>9,450 total units produced</strong></li>
+</ul>
+
+<p><strong>Where to look:</strong></p>
+<ul>
+  <li>The iData report for any system (Master section &rarr; "Serial number instrument")</li>
+  <li>The physical nameplate/label on the instrument itself</li>
+  <li>Hamilton's service or sales records, if accessible</li>
+  <li>A Hamilton field service engineer may be able to confirm the latest serial they've seen</li>
+</ul>
+
+<p>This approach bypasses all modeling and extrapolation — one serial number gives the answer directly.</p>
 
 <div class="footer">
   <p>Analysis performed {datetime.now().strftime('%Y-%m-%d')}. Source: Hamilton iData instrument PDFs
