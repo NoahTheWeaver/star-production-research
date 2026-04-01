@@ -1,0 +1,450 @@
+[
+  {
+    "folder": "1413",
+    "serial_number": "1413",
+    "installation_date": "2005-05-12",
+    "format": "microlab",
+    "source_file": "ML_STAR_1413_idata_2024-10-23_Post.pdf"
+  },
+  {
+    "folder": "177D",
+    "serial_number": "177D",
+    "installation_date": "2023-04-26",
+    "format": "microlab",
+    "source_file": "ML_STAR_177D_idata_2025-06-09_Post.pdf"
+  },
+  {
+    "folder": "1959",
+    "serial_number": "1959",
+    "installation_date": "2015-06-18",
+    "format": "microlab",
+    "source_file": "ML_STAR_1959_idata_2025-04-10_Post.pdf"
+  },
+  {
+    "folder": "2082",
+    "serial_number": "2082",
+    "installation_date": "2007-01-08",
+    "format": "microlab",
+    "source_file": "ML_STAR_2082_idata_2025-02-12_Post.pdf"
+  },
+  {
+    "folder": "2820",
+    "serial_number": "2820",
+    "installation_date": "2008-05-14",
+    "format": "hamilton",
+    "source_file": "20241205_083010-instrument-data-STARlet-2820.pdf"
+  },
+  {
+    "folder": "293H",
+    "serial_number": "293H",
+    "installation_date": "2021-05-27",
+    "format": "microlab",
+    "source_file": "ML_STAR_293H_idata_2025-04-09_Post.pdf"
+  },
+  {
+    "folder": "324G",
+    "serial_number": "324G",
+    "installation_date": "2021-02-11",
+    "format": "microlab",
+    "source_file": "ML_STAR_324G_idata_2025-03-19_Pre.pdf"
+  },
+  {
+    "folder": "354H",
+    "serial_number": "354H",
+    "installation_date": "2021-06-09",
+    "format": "microlab",
+    "source_file": "ML_STAR_354H_idata_2024-08-21Post.pdf"
+  },
+  {
+    "folder": "5130",
+    "serial_number": "5130",
+    "installation_date": "2011-12-13",
+    "format": "microlab",
+    "source_file": "ML_STAR_5130_idata_2024-07-15.pdf"
+  },
+  {
+    "folder": "7109",
+    "serial_number": "7109",
+    "installation_date": "2014-04-02",
+    "format": "microlab",
+    "source_file": "ML_STAR_7109_idata_2024-11-06_Post.pdf"
+  },
+  {
+    "folder": "A110",
+    "serial_number": "A110",
+    "installation_date": "2010-07-15",
+    "format": "microlab",
+    "source_file": "ML_STAR_A110_idata_2025-06-12_Pre.pdf"
+  },
+  {
+    "folder": "A142",
+    "serial_number": "A142",
+    "installation_date": "2010-05-17",
+    "format": "hamilton",
+    "source_file": "20240627_090621-instrument-data-STARlet-A142.pdf"
+  },
+  {
+    "folder": "A234",
+    "serial_number": "A025",
+    "installation_date": "2008-10-24",
+    "format": "microlab",
+    "source_file": "ML_STAR_A025_idata_2024-12-19_Post.pdf"
+  },
+  {
+    "folder": "A405",
+    "serial_number": "A405",
+    "installation_date": "2013-01-29",
+    "format": "microlab",
+    "source_file": "ML_STAR_A405_idata_2025-01-03_Post.pdf"
+  },
+  {
+    "folder": "A517",
+    "serial_number": "A517",
+    "installation_date": "2011-10-13",
+    "format": "hamilton",
+    "source_file": "20241223_105643-instrument-data-STARlet-A517.pdf"
+  },
+  {
+    "folder": "B190",
+    "serial_number": "B190",
+    "installation_date": "2014-09-05",
+    "format": "microlab",
+    "source_file": "ML_STAR_B190_idata_2024-10-12_Updated.pdf"
+  },
+  {
+    "folder": "B222",
+    "serial_number": "B222",
+    "installation_date": "2014-10-14",
+    "format": "microlab",
+    "source_file": "ML_STAR_B222_idata_2024-08-01_Post.pdf"
+  },
+  {
+    "folder": "B286",
+    "serial_number": "B286",
+    "installation_date": "2014-12-08",
+    "format": "microlab",
+    "source_file": "ML_STAR_B286_idata_2025-02-20_FW Upgrade.pdf"
+  },
+  {
+    "folder": "B368",
+    "serial_number": "B368",
+    "installation_date": "2015-05-06",
+    "format": "microlab",
+    "source_file": "ML_STAR_B368_idata_2024-10-30_Post.pdf"
+  },
+  {
+    "folder": "B522",
+    "serial_number": "B522",
+    "installation_date": "2015-07-27",
+    "format": "microlab",
+    "source_file": "ML_STAR_B522_idata_2024-08-07_Post.pdf"
+  },
+  {
+    "folder": "C716",
+    "serial_number": "C716",
+    "installation_date": "2018-05-03",
+    "format": "hamilton",
+    "source_file": "20240625_073604-instrument-data-STAR-C716.pdf"
+  },
+  {
+    "folder": "C897",
+    "serial_number": "C897",
+    "installation_date": "2019-08-07",
+    "format": "microlab",
+    "source_file": "ML_STAR_C897_idata_2025-01-16_Pre.pdf"
+  },
+  {
+    "folder": "D003",
+    "serial_number": "D003",
+    "installation_date": "2018-09-28",
+    "format": "hamilton",
+    "source_file": "20250508_121655-instrument-data-STAR-D003_Pre.pdf"
+  },
+  {
+    "folder": "D012",
+    "serial_number": "D012",
+    "installation_date": "2018-10-08",
+    "format": "hamilton",
+    "source_file": "20250508_100748-instrument-data-STAR-D012_Pre.pdf"
+  },
+  {
+    "folder": "D130",
+    "serial_number": "D130",
+    "installation_date": "2019-01-24",
+    "format": "hamilton",
+    "source_file": "20241204_104240-instrument-data-STARlet-D130.pdf"
+  },
+  {
+    "folder": "D148",
+    "serial_number": "D148",
+    "installation_date": "2018-12-11",
+    "format": "hamilton",
+    "source_file": "20250507_115112-instrument-data-STAR-D148_Pre.pdf"
+  },
+  {
+    "folder": "D182",
+    "serial_number": "D182",
+    "installation_date": "2018-12-28",
+    "format": "hamilton",
+    "source_file": "20250423_143538-instrument-data-STAR-D182_Pre - Copy.pdf"
+  },
+  {
+    "folder": "D184",
+    "serial_number": "D184",
+    "installation_date": "2019-01-02",
+    "format": "microlab",
+    "source_file": "ML_STAR_D184_idata_2024-07-29_Pre.pdf"
+  },
+  {
+    "folder": "D190",
+    "serial_number": "D190",
+    "installation_date": "2019-01-04",
+    "format": "hamilton",
+    "source_file": "20250507_150423-instrument-data-STAR-D190_Pre.pdf"
+  },
+  {
+    "folder": "D227",
+    "serial_number": "D227",
+    "installation_date": "2019-02-25",
+    "format": "microlab",
+    "source_file": "ML_STAR_D227_idata_2024-11-21_Post.pdf"
+  },
+  {
+    "folder": "D248",
+    "serial_number": "D248",
+    "installation_date": "2019-01-29",
+    "format": "microlab",
+    "source_file": "ML_STAR_D248_idata_2024-11-22.pdf"
+  },
+  {
+    "folder": "D652",
+    "serial_number": "D652",
+    "installation_date": "2020-05-05",
+    "format": "microlab",
+    "source_file": "ML_STAR_D652_idata_2025-01-22_Post.pdf"
+  },
+  {
+    "folder": "D717",
+    "serial_number": "D717",
+    "installation_date": "2016-02-22",
+    "format": "microlab",
+    "source_file": "ML_STAR_D717_idata_2024-12-06_Pre.pdf"
+  },
+  {
+    "folder": "D777",
+    "serial_number": "D777",
+    "installation_date": "2020-02-05",
+    "format": "hamilton",
+    "source_file": "20240624_091602-instrument-data-STAR-D777.pdf"
+  },
+  {
+    "folder": "D905",
+    "serial_number": "D905",
+    "installation_date": "2019-11-12",
+    "format": "microlab",
+    "source_file": "ML_STAR_D905_idata_2024-09-11_Post.pdf"
+  },
+  {
+    "folder": "E049",
+    "serial_number": "E049",
+    "installation_date": "2020-05-12",
+    "format": "microlab",
+    "source_file": "ML_STAR_E049_idata_2024-08-22_Post.pdf"
+  },
+  {
+    "folder": "E222",
+    "serial_number": "E222",
+    "installation_date": "2020-06-11",
+    "format": "microlab",
+    "source_file": "ML_STAR_E222_idata_2024-08-29_post.pdf"
+  },
+  {
+    "folder": "E309",
+    "serial_number": "E309",
+    "installation_date": "2020-21-05",
+    "format": "microlab",
+    "source_file": "ML_STAR_E309_idata_2024-08-14_PostMove.pdf"
+  },
+  {
+    "folder": "E313",
+    "serial_number": "E313",
+    "installation_date": "2020-05-26",
+    "format": "microlab",
+    "source_file": "ML_STAR_E313_idata_2024-10-04-Pre.pdf"
+  },
+  {
+    "folder": "E601",
+    "serial_number": "E601",
+    "installation_date": "2021-01-13",
+    "format": "microlab",
+    "source_file": "ML_STAR_E601_idata_2025-01-23_Post.pdf"
+  },
+  {
+    "folder": "E606",
+    "serial_number": "E606",
+    "installation_date": "2021-01-11",
+    "format": "microlab",
+    "source_file": "ML_STAR_E606_idata_2024-10-30_Post.pdf"
+  },
+  {
+    "folder": "E637",
+    "serial_number": "E637",
+    "installation_date": "2020-08-04",
+    "format": "microlab",
+    "source_file": "ML_STAR_E637_idata_2024-08-15.pdf"
+  },
+  {
+    "folder": "E682",
+    "serial_number": "E682",
+    "installation_date": "2021-01-12",
+    "format": "microlab",
+    "source_file": "ML_STAR_E682_idata_2024-09-26_Post.pdf"
+  },
+  {
+    "folder": "E683",
+    "serial_number": "E683",
+    "installation_date": "2020-08-13",
+    "format": "microlab",
+    "source_file": "ML_STAR_E683_idata_2024-07-16_Post.pdf"
+  },
+  {
+    "folder": "E687",
+    "serial_number": "E687",
+    "installation_date": "2020-08-13",
+    "format": "microlab",
+    "source_file": "ML_STAR_E687_idata_2024-12-05_Post.pdf"
+  },
+  {
+    "folder": "E889",
+    "serial_number": "E889",
+    "installation_date": "2020-10-07",
+    "format": "microlab",
+    "source_file": "ML_STAR_E889_idata_2024-09-13_Post.pdf"
+  },
+  {
+    "folder": "E903",
+    "serial_number": "E903",
+    "installation_date": "2020-10-13",
+    "format": "microlab",
+    "source_file": "ML_STAR_E903_idata_2024-10-03_Pre.pdf"
+  },
+  {
+    "folder": "F498",
+    "serial_number": "F498",
+    "installation_date": "2021-02-16",
+    "format": "microlab",
+    "source_file": "ML_STAR_F498_idata_2024-09-25_post2.pdf"
+  },
+  {
+    "folder": "F499",
+    "serial_number": "F499",
+    "installation_date": "2021-02-16",
+    "format": "microlab",
+    "source_file": "ML_STAR_F499_idata_2025-04-10.pdf"
+  },
+  {
+    "folder": "F719",
+    "serial_number": "F719",
+    "installation_date": "2021-04-01",
+    "format": "microlab",
+    "source_file": "ML_STAR_F719_idata_2025-02-28_Post.pdf"
+  },
+  {
+    "folder": "G101",
+    "serial_number": "G101",
+    "installation_date": "2021-06-01",
+    "format": "microlab",
+    "source_file": "ML_STAR_G101_idata_2024-12-19_Post.pdf"
+  },
+  {
+    "folder": "G111",
+    "serial_number": "G111",
+    "installation_date": "2021-06-02",
+    "format": "microlab",
+    "source_file": "ML_STAR_G111_idata_2024-07-31_Pre.pdf"
+  },
+  {
+    "folder": "G124",
+    "serial_number": "G124",
+    "installation_date": "2021-06-03",
+    "format": "hamilton",
+    "source_file": "20240722_090858-instrument-data-STAR-G124.pdf"
+  },
+  {
+    "folder": "G270",
+    "serial_number": "G270",
+    "installation_date": "2021-06-21",
+    "format": "microlab",
+    "source_file": "ML_STAR_G270_idata_2025-04-10_Post.pdf"
+  },
+  {
+    "folder": "G850",
+    "serial_number": "G850",
+    "installation_date": "2022-01-13",
+    "format": "microlab",
+    "source_file": "ML_STAR_G850_idata_2024-08-20.pdf"
+  },
+  {
+    "folder": "G853",
+    "serial_number": "G853",
+    "installation_date": "2022-01-12",
+    "format": "microlab",
+    "source_file": "ML_STAR_G853_idata_2024-08-21Post.pdf"
+  },
+  {
+    "folder": "H011",
+    "serial_number": "H011",
+    "installation_date": "2021-10-11",
+    "format": "microlab",
+    "source_file": "ML_STAR_H011_idata_2024-09-11_Post.pdf"
+  },
+  {
+    "folder": "H033",
+    "serial_number": "H033",
+    "installation_date": "2021-10-14",
+    "format": "microlab",
+    "source_file": "ML_STAR_H033_idata_2024-09-12_Post.pdf"
+  },
+  {
+    "folder": "H039",
+    "serial_number": "H039",
+    "installation_date": "2021-10-18",
+    "format": "microlab",
+    "source_file": "ML_STAR_H039_idata_2025-03-27_Post.pdf"
+  },
+  {
+    "folder": "H074",
+    "serial_number": "H074",
+    "installation_date": "2021-12-20",
+    "format": "microlab",
+    "source_file": "ML_STAR_H074_idata_2025-04-16_Post.pdf"
+  },
+  {
+    "folder": "H107",
+    "serial_number": "H107",
+    "installation_date": "2021-12-08",
+    "format": "microlab",
+    "source_file": "ML_STAR_H107_idata_2024-09-12_Post.pdf"
+  },
+  {
+    "folder": "H175",
+    "serial_number": "H175",
+    "installation_date": "2021-12-08",
+    "format": "microlab",
+    "source_file": "ML_STAR_H175_idata_2024-08-20_Post.pdf"
+  },
+  {
+    "folder": "H204",
+    "serial_number": "H204",
+    "installation_date": "2021-12-01",
+    "format": "microlab",
+    "source_file": "ML_STAR_H204_idata_2025-06-10_Post.pdf"
+  },
+  {
+    "folder": "H230",
+    "serial_number": "H230",
+    "installation_date": "2022-02-02",
+    "format": "microlab",
+    "source_file": "ML_STAR_H230_idata_2025-06-11_Post.pdf"
+  }
+]

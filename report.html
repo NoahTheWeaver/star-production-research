@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hamilton Microlab STAR — Production Volume Analysis</title>
+<style>
+  body { font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+         max-width: 1100px; margin: 0 auto; padding: 20px 40px; color: #333;
+         line-height: 1.6; }
+  h1 { color: #1a3a5c; border-bottom: 3px solid #1a3a5c; padding-bottom: 10px; }
+  h2 { color: #2c5f8a; margin-top: 40px; }
+  h3 { color: #3a7cb8; }
+  .headline { background: linear-gradient(135deg, #B71C1C 0%, #D84315 100%);
+               color: white; padding: 24px 30px; border-radius: 8px; margin: 25px 0;
+               font-size: 15px; line-height: 1.7; }
+  .headline .big { font-size: 32px; font-weight: bold; display: block; margin-bottom: 6px; }
+  .headline .sub { font-size: 17px; opacity: 0.95; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+               gap: 16px; margin: 20px 0; }
+  .kpi { background: #f0f6fc; border-left: 4px solid #2c5f8a; padding: 16px 20px;
+          border-radius: 4px; }
+  .kpi.accent { border-left-color: #B71C1C; background: #fce4ec; }
+  .kpi .value { font-size: 28px; font-weight: bold; color: #1a3a5c; }
+  .kpi.accent .value { color: #B71C1C; }
+  .kpi .label { font-size: 13px; color: #666; margin-top: 4px; }
+  table { border-collapse: collapse; width: 100%; margin: 15px 0; font-size: 14px; }
+  th { background: #1a3a5c; color: white; padding: 10px 12px; text-align: left; }
+  td { padding: 8px 12px; border-bottom: 1px solid #e0e0e0; }
+  tr:nth-child(even) { background: #f8f9fa; }
+  tr:hover { background: #e8f0fe; }
+  .era-pre { color: #1565C0; font-weight: 600; }
+  .era-inflection { color: #B71C1C; font-weight: 600; }
+  .era-post { color: #E65100; font-weight: 600; }
+  .era-row-pre { }
+  .era-row-post { background: #FFF8E1; }
+  .note { background: #fff8e1; border-left: 4px solid #f9a825; padding: 12px 16px;
+           margin: 15px 0; border-radius: 4px; font-size: 14px; }
+  .methodology { background: #f1f8e9; border-left: 4px solid #7cb342; padding: 14px 18px;
+                  margin: 15px 0; border-radius: 4px; font-size: 14px; }
+  .model-table { margin: 15px 0; }
+  .model-table td, .model-table th { padding: 10px 16px; }
+  .winner { background: #E8F5E9 !important; font-weight: bold; }
+  .scatter-container { text-align: center; margin: 25px 0; }
+  .scatter-container img { max-width: 100%; border: 1px solid #ddd; border-radius: 4px;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .scatter-container .caption { font-size: 13px; color: #666; margin-top: 8px; font-style: italic; }
+  .two-era { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+  .era-box { padding: 20px; border-radius: 6px; }
+  .era-box.pre { background: #E3F2FD; border: 2px solid #1565C0; }
+  .era-box.post { background: #FFF3E0; border: 2px solid #E65100; }
+  .era-box h3 { margin-top: 0; }
+  .era-box .rate { font-size: 28px; font-weight: bold; }
+  .era-box.pre .rate { color: #1565C0; }
+  .era-box.post .rate { color: #E65100; }
+  .footer { margin-top: 40px; padding-top: 15px; border-top: 1px solid #ddd;
+             font-size: 12px; color: #999; }
+  .corrected { color: #e65100; font-size: 12px; }
+</style>
+</head>
+<body>
+
+<h1>Hamilton Microlab STAR — Production Volume Analysis</h1>
+<p><strong>Report generated:</strong> April 01, 2026<br>
+<strong>Data source:</strong> Hamilton iData instrument PDFs (64 systems analyzed)<br>
+<strong>Scope:</strong> Serial number and installation date analysis to estimate manufacturing volume and production rate</p>
+
+<!-- ============================================================ -->
+<h2>Executive Summary</h2>
+
+<div class="kpi-grid">
+  <div class="kpi">
+    <div class="value">~7,460</div>
+    <div class="label">Implied total units manufactured (letter-prefix serial range)</div>
+  </div>
+  <div class="kpi">
+    <div class="value">64</div>
+    <div class="label">Unique systems in sample</div>
+  </div>
+  <div class="kpi">
+    <div class="value">18 yrs</div>
+    <div class="label">Date range covered (2005-05-12 to 2023-04-26)</div>
+  </div>
+</div>
+
+<div class="two-era">
+  <div class="era-box pre">
+    <h3 style="color:#1565C0;">Era 1: Pre-May 2020</h3>
+    <div class="rate">~362 units/year</div>
+    <p>Steady, moderate production from 2008 through early 2020.<br>
+    Serial range: 25–3905 (3,881 implied units over ~12 years)<br>
+    Systems in sample: 24</p>
+  </div>
+  <div class="era-box post">
+    <h3 style="color:#E65100;">Era 2: Post-May 2020</h3>
+    <div class="rate">~1881 units/year</div>
+    <p>Rapid acceleration beginning ~May 2020.<br>
+    Serial range: 3652–7230 (3,579 implied units over ~1.7 years)<br>
+    Systems in sample: 30</p>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<h2>Production Over Time</h2>
+
+<div class="scatter-container">
+  <img src="production_scatter.png" alt="Serial Number vs. Manufacture Date — Piecewise Linear Fit">
+  <div class="caption">Figure 1: Each dot is one observed system. The blue dashed line shows the pre-May 2020 trend (~362/yr);
+  the orange dashed line shows the post-May 2020 trend (~1881/yr). Vertical red line marks the inflection point.</div>
+</div>
+
+<p>The scatter plot makes the two production eras visually unmistakable. Before May 2020, serial numbers
+advanced slowly — roughly 362 new units per year. After the inflection point, the slope
+steepens dramatically to approximately 1881 units per year.</p>
+
+<!-- ============================================================ -->
+<h2>Why a Piecewise Model — Not a Straight Line</h2>
+
+<p>An initial linear regression across the full dataset yields R² = 0.815 — meaning
+a straight line explains only 81% of the variance in serial numbers over time.
+Three candidate models were evaluated:</p>
+
+<table class="model-table">
+  <thead>
+    <tr><th>Model</th><th>R²</th><th>AIC</th><th>Parameters</th><th>Interpretation</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Linear</td>
+      <td>0.815</td>
+      <td>739.5</td>
+      <td>2</td>
+      <td>Constant production rate (~578/yr) — poor fit</td>
+    </tr>
+    <tr>
+      <td>Quadratic</td>
+      <td>0.927</td>
+      <td>691.3</td>
+      <td>3</td>
+      <td>Gradually accelerating production — better</td>
+    </tr>
+    <tr class="winner">
+      <td>Piecewise Linear</td>
+      <td>0.972</td>
+      <td>644.2</td>
+      <td>5</td>
+      <td>Two distinct eras with a breakpoint — best fit</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>The piecewise-linear model is the recommended model</strong> for three reasons:</p>
+
+<ol>
+  <li><strong>Lowest AIC</strong> (Akaike Information Criterion): Despite using more parameters, the
+  piecewise model's improvement in fit more than compensates for the added complexity. AIC penalizes
+  extra parameters, so a lower AIC means a genuinely better model, not just overfitting.</li>
+
+  <li><strong>Highest R²</strong> (0.972): The piecewise model explains 97% of the
+  variance in serial number progression — versus 81% for the linear model. That is a
+  substantial improvement.</li>
+
+  <li><strong>Residual diagnostics</strong>: The linear model's residuals show a clear systematic pattern
+  (see Figure 2, bottom-left) — underpredicting early and late, overpredicting in the middle. This is a
+  textbook sign of model misspecification. The piecewise model's residuals are randomly scattered
+  (bottom-right), indicating a proper fit.</li>
+</ol>
+
+<div class="scatter-container">
+  <img src="model_comparison.png" alt="Model Comparison — Four Panel Diagnostic">
+  <div class="caption">Figure 2: Model comparison diagnostics. Top-left: all three models overlaid.
+  Top-right: piecewise model with color-coded eras. Bottom: residual plots showing the linear model's
+  systematic error pattern (left) vs. the piecewise model's random residuals (right).</div>
+</div>
+
+<div class="note">
+<strong>What does the inflection point mean?</strong> The data indicates that something changed in Hamilton's
+STAR manufacturing around May 2020 — either a capacity expansion, a new production line, increased
+market demand, or a combination. The ~5x rate increase is too large to be explained by
+normal year-to-year variation. It represents a fundamental shift in production volume.
+</div>
+
+<!-- ============================================================ -->
+<h2>Serial Number Format Analysis</h2>
+
+<p>Four serial number formats were observed:</p>
+<ul>
+  <li><strong>Letter + 3 digits</strong> (e.g., A142, D777, H230): 54 systems — primary modern format, used for regression analysis</li>
+  <li><strong>Pure numeric</strong> (e.g., 1413, 5130, 7109): 6 systems — older/parallel numbering scheme</li>
+  <li><strong>3 digits + letter</strong> (e.g., 293H, 354H): 4 systems — variant format</li>
+  <li><strong>Other</strong> (e.g., 177D): 0 system</li>
+</ul>
+
+<div class="note">
+<strong>Note on numeric serials:</strong> The 6 pure-numeric serials (1413, 1959, 2082, 2820, 5130, 7109)
+do not follow the letter-prefix ordinal scheme and appear to represent a separate or legacy numbering
+system. They were <strong>excluded from the regression analysis</strong> to avoid distortion, though they
+are included in the full data table below. The variant formats (293H, 324G, 354H, 177D) were also
+excluded from regression for the same reason.
+</div>
+
+<!-- ============================================================ -->
+<h2>Year-by-Year Breakdown</h2>
+
+<table>
+  <thead>
+    <tr><th>Year</th><th>Systems in Sample</th><th>Era</th><th>Serial Numbers</th></tr>
+  </thead>
+  <tbody>
+        <tr>
+          <td><strong>2005</strong></td>
+          <td>1</td>
+          <td class="era-pre-inflection">Pre-inflection</td>
+          <td>1413</td>
+        </tr>
+        <tr>
+          <td><strong>2007</strong></td>
+          <td>1</td>
+          <td class="era-pre-inflection">Pre-inflection</td>
+          <td>2082</td>
+        </tr>
+        <tr>
+          <td><strong>2008</strong></td>
+          <td>2</td>
+          <td class="era-pre-inflection">Pre-inflection</td>
+          <td>2820, A025</td>
+        </tr>
+        <tr>
+          <td><strong>2010</strong></td>
+          <td>2</td>
+          <td class="era-pre-inflection">Pre-inflection</td>
+          <td>A110, A142</td>
+        </tr>
+        <tr>
+          <td><strong>2011</strong></td>
+          <td>2</td>
+          <td class="era-pre-inflection">Pre-inflection</td>
+          <td>5130, A517</td>
+        </tr>
+        <tr>
+          <td><strong>2013</strong></td>
+          <td>1</td>
+          <td class="era-pre-inflection">Pre-inflection</td>
+          <td>A405</td>
+        </tr>
+        <tr>
+          <td><strong>2014</strong></td>
+          <td>4</td>
+          <td class="era-pre-inflection">Pre-inflection</td>
+          <td>7109, B190, B222, B286</td>
+        </tr>
+        <tr>
+          <td><strong>2015</strong></td>
+          <td>3</td>
+          <td class="era-pre-inflection">Pre-inflection</td>
+          <td>1959, B368, B522</td>
+        </tr>
+        <tr>
+          <td><strong>2016</strong></td>
+          <td>1</td>
+          <td class="era-pre-inflection">Pre-inflection</td>
+          <td>D717</td>
+        </tr>
+        <tr>
+          <td><strong>2018</strong></td>
+          <td>5</td>
+          <td class="era-pre-inflection">Pre-inflection</td>
+          <td>C716, D003, D012, D148, D182</td>
+        </tr>
+        <tr>
+          <td><strong>2019</strong></td>
+          <td>7</td>
+          <td class="era-pre-inflection">Pre-inflection</td>
+          <td>C897, D130, D184, D190, D227, D248, D905</td>
+        </tr>
+        <tr>
+          <td><strong>2020</strong></td>
+          <td>11</td>
+          <td class="era-inflection">Inflection year</td>
+          <td>D652, D777, E049, E222, E309, E313, E637, E683, E687, E889, E903</td>
+        </tr>
+        <tr>
+          <td><strong>2021</strong></td>
+          <td>20</td>
+          <td class="era-post-inflection">Post-inflection</td>
+          <td>293H, 324G, 354H, E601, E606, E682, F498, F499, F719, G101, G111, G124, G270, H011, H033, H039, H074, H107, H175, H204</td>
+        </tr>
+        <tr>
+          <td><strong>2022</strong></td>
+          <td>3</td>
+          <td class="era-post-inflection">Post-inflection</td>
+          <td>G850, G853, H230</td>
+        </tr>
+        <tr>
+          <td><strong>2023</strong></td>
+          <td>1</td>
+          <td class="era-post-inflection">Post-inflection</td>
+          <td>177D</td>
+        </tr>
+  </tbody>
+</table>
+
+<!-- ============================================================ -->
+<h2>Complete Data Table</h2>
+
+<p>64 systems sorted by installation date. Post-2019 rows highlighted.</p>
+
+<table>
+  <thead>
+    <tr><th>Serial Number</th><th>Installation Date</th><th>Format</th><th>Ordinal</th></tr>
+  </thead>
+  <tbody>
+        <tr class="era-row-pre">
+          <td><strong>1413</strong></td>
+          <td>2005-05-12</td>
+          <td>numeric 4digit</td>
+          <td>1413</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>2082</strong></td>
+          <td>2007-01-08</td>
+          <td>numeric 4digit</td>
+          <td>2082</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>2820</strong></td>
+          <td>2008-05-14</td>
+          <td>numeric 4digit</td>
+          <td>2820</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>A025</strong></td>
+          <td>2008-10-24</td>
+          <td>letter prefix</td>
+          <td>25</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>A142</strong></td>
+          <td>2010-05-17</td>
+          <td>letter prefix</td>
+          <td>142</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>A110</strong></td>
+          <td>2010-07-15</td>
+          <td>letter prefix</td>
+          <td>110</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>A517</strong></td>
+          <td>2011-10-13</td>
+          <td>letter prefix</td>
+          <td>517</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>5130</strong></td>
+          <td>2011-12-13</td>
+          <td>numeric 4digit</td>
+          <td>5130</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>A405</strong></td>
+          <td>2013-01-29</td>
+          <td>letter prefix</td>
+          <td>405</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>7109</strong></td>
+          <td>2014-04-02</td>
+          <td>numeric 4digit</td>
+          <td>7109</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>B190</strong></td>
+          <td>2014-09-05</td>
+          <td>letter prefix</td>
+          <td>1190</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>B222</strong></td>
+          <td>2014-10-14</td>
+          <td>letter prefix</td>
+          <td>1222</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>B286</strong></td>
+          <td>2014-12-08</td>
+          <td>letter prefix</td>
+          <td>1286</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>B368</strong></td>
+          <td>2015-05-06</td>
+          <td>letter prefix</td>
+          <td>1368</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>1959</strong></td>
+          <td>2015-06-18</td>
+          <td>numeric 4digit</td>
+          <td>1959</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>B522</strong></td>
+          <td>2015-07-27</td>
+          <td>letter prefix</td>
+          <td>1522</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>D717</strong></td>
+          <td>2016-02-22</td>
+          <td>letter prefix</td>
+          <td>3717</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>C716</strong></td>
+          <td>2018-05-03</td>
+          <td>letter prefix</td>
+          <td>2716</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>D003</strong></td>
+          <td>2018-09-28</td>
+          <td>letter prefix</td>
+          <td>3003</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>D012</strong></td>
+          <td>2018-10-08</td>
+          <td>letter prefix</td>
+          <td>3012</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>D148</strong></td>
+          <td>2018-12-11</td>
+          <td>letter prefix</td>
+          <td>3148</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>D182</strong></td>
+          <td>2018-12-28</td>
+          <td>letter prefix</td>
+          <td>3182</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>D184</strong></td>
+          <td>2019-01-02</td>
+          <td>letter prefix</td>
+          <td>3184</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>D190</strong></td>
+          <td>2019-01-04</td>
+          <td>letter prefix</td>
+          <td>3190</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>D130</strong></td>
+          <td>2019-01-24</td>
+          <td>letter prefix</td>
+          <td>3130</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>D248</strong></td>
+          <td>2019-01-29</td>
+          <td>letter prefix</td>
+          <td>3248</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>D227</strong></td>
+          <td>2019-02-25</td>
+          <td>letter prefix</td>
+          <td>3227</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>C897</strong></td>
+          <td>2019-08-07</td>
+          <td>letter prefix</td>
+          <td>2897</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>D905</strong></td>
+          <td>2019-11-12</td>
+          <td>letter prefix</td>
+          <td>3905</td>
+        </tr>
+        <tr class="era-row-pre">
+          <td><strong>D777</strong></td>
+          <td>2020-02-05</td>
+          <td>letter prefix</td>
+          <td>3777</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>D652</strong></td>
+          <td>2020-05-05</td>
+          <td>letter prefix</td>
+          <td>3652</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>E049</strong></td>
+          <td>2020-05-12</td>
+          <td>letter prefix</td>
+          <td>4049</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>E309</strong></td>
+          <td>2020-05-21 *</td>
+          <td>letter prefix</td>
+          <td>4309</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>E313</strong></td>
+          <td>2020-05-26</td>
+          <td>letter prefix</td>
+          <td>4313</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>E222</strong></td>
+          <td>2020-06-11</td>
+          <td>letter prefix</td>
+          <td>4222</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>E637</strong></td>
+          <td>2020-08-04</td>
+          <td>letter prefix</td>
+          <td>4637</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>E683</strong></td>
+          <td>2020-08-13</td>
+          <td>letter prefix</td>
+          <td>4683</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>E687</strong></td>
+          <td>2020-08-13</td>
+          <td>letter prefix</td>
+          <td>4687</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>E889</strong></td>
+          <td>2020-10-07</td>
+          <td>letter prefix</td>
+          <td>4889</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>E903</strong></td>
+          <td>2020-10-13</td>
+          <td>letter prefix</td>
+          <td>4903</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>E606</strong></td>
+          <td>2021-01-11</td>
+          <td>letter prefix</td>
+          <td>4606</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>E682</strong></td>
+          <td>2021-01-12</td>
+          <td>letter prefix</td>
+          <td>4682</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>E601</strong></td>
+          <td>2021-01-13</td>
+          <td>letter prefix</td>
+          <td>4601</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>324G</strong></td>
+          <td>2021-02-11</td>
+          <td>digit prefix letter suffix</td>
+          <td>N/A</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>F498</strong></td>
+          <td>2021-02-16</td>
+          <td>letter prefix</td>
+          <td>5498</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>F499</strong></td>
+          <td>2021-02-16</td>
+          <td>letter prefix</td>
+          <td>5499</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>F719</strong></td>
+          <td>2021-04-01</td>
+          <td>letter prefix</td>
+          <td>5719</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>293H</strong></td>
+          <td>2021-05-27</td>
+          <td>digit prefix letter suffix</td>
+          <td>N/A</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>G101</strong></td>
+          <td>2021-06-01</td>
+          <td>letter prefix</td>
+          <td>6101</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>G111</strong></td>
+          <td>2021-06-02</td>
+          <td>letter prefix</td>
+          <td>6111</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>G124</strong></td>
+          <td>2021-06-03</td>
+          <td>letter prefix</td>
+          <td>6124</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>354H</strong></td>
+          <td>2021-06-09</td>
+          <td>digit prefix letter suffix</td>
+          <td>N/A</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>G270</strong></td>
+          <td>2021-06-21</td>
+          <td>letter prefix</td>
+          <td>6270</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>H011</strong></td>
+          <td>2021-10-11</td>
+          <td>letter prefix</td>
+          <td>7011</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>H033</strong></td>
+          <td>2021-10-14</td>
+          <td>letter prefix</td>
+          <td>7033</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>H039</strong></td>
+          <td>2021-10-18</td>
+          <td>letter prefix</td>
+          <td>7039</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>H204</strong></td>
+          <td>2021-12-01</td>
+          <td>letter prefix</td>
+          <td>7204</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>H107</strong></td>
+          <td>2021-12-08</td>
+          <td>letter prefix</td>
+          <td>7107</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>H175</strong></td>
+          <td>2021-12-08</td>
+          <td>letter prefix</td>
+          <td>7175</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>H074</strong></td>
+          <td>2021-12-20</td>
+          <td>letter prefix</td>
+          <td>7074</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>G853</strong></td>
+          <td>2022-01-12</td>
+          <td>letter prefix</td>
+          <td>6853</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>G850</strong></td>
+          <td>2022-01-13</td>
+          <td>letter prefix</td>
+          <td>6850</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>H230</strong></td>
+          <td>2022-02-02</td>
+          <td>letter prefix</td>
+          <td>7230</td>
+        </tr>
+        <tr class="era-row-post">
+          <td><strong>177D</strong></td>
+          <td>2023-04-26</td>
+          <td>digit prefix letter suffix</td>
+          <td>N/A</td>
+        </tr>
+  </tbody>
+</table>
+
+<p class="corrected">* Date corrected from source PDF (original contained data-entry error)</p>
+
+<!-- ============================================================ -->
+<h2>Data Quality Notes</h2>
+<ul>
+  <li><strong>E309:</strong> Installation date in source PDF reads "2020-21-05" (invalid). Corrected to
+      2020-05-21 based on download date alignment.</li>
+  <li><strong>A234 folder:</strong> Folder is labeled "A234" but both PDFs reference serial <strong>A025</strong>.
+      Data correctly extracted as A025. The folder name appears to be a mislabel.</li>
+  <li><strong>1941, F679:</strong> System folders exist but contain no PDF files. Excluded.</li>
+  <li><strong>Multiple PDFs per system:</strong> Where Pre/Post service records exist, installation dates
+      are consistent across all PDFs for the same system.</li>
+  <li><strong>"Installation date" as manufacture proxy:</strong> This field records the date of initial
+      system installation. Actual manufacture date may precede this by weeks to months — the
+      production rate estimates should be understood as approximate.</li>
+</ul>
+
+<!-- ============================================================ -->
+<h2>Limitations</h2>
+<ul>
+  <li>Sample of 64 systems — not a complete production census. Rate estimates assume
+      the sample is reasonably representative of the full production population.</li>
+  <li>Serial number gaps may exist (skipped numbers, test units, returns).
+      Implied totals are upper bounds.</li>
+  <li>The piecewise breakpoint is optimized from the data, not independently confirmed.
+      The true inflection may be slightly earlier or later than May 2020.</li>
+  <li>Post-2020 rate may overstate sustained production if the sample is biased toward
+      recent systems (which are more likely to have iData on file).</li>
+</ul>
+
+<div class="footer">
+  <p>Analysis performed 2026-04-01. Source: Hamilton iData instrument PDFs
+  in <code>_iData by System/</code>. Extraction and analysis scripts: <code>extract_data.py</code>,
+  <code>generate_final_report.py</code>.</p>
+</div>
+
+</body>
+</html>
