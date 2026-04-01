@@ -359,6 +359,12 @@ def generate_html(records, res):
     pre_lp = [r for r in lp_records if r["installation_date"] < bp_date]
     post_lp = [r for r in lp_records if r["installation_date"] >= bp_date]
 
+    # Most recent letter-prefix system (for cutoff note)
+    latest_lp = max(lp_records, key=lambda r: r["installation_date"])
+    latest_lp_sn = latest_lp["serial_number"]
+    latest_lp_date = latest_lp["installation_date"]
+    latest_lp_ord = serial_to_ordinal(latest_lp_sn)
+
     pre_ords = sorted([serial_to_ordinal(r["serial_number"]) for r in pre_lp])
     post_ords = sorted([serial_to_ordinal(r["serial_number"]) for r in post_lp])
 
@@ -453,11 +459,11 @@ def generate_html(records, res):
 </div>
 
 <div class="note">
-<strong>Data cutoff:</strong> The most recent system in our dataset was installed <strong>{date_end}</strong>
-(serial {records[-1]['serial_number']}). We do not have iData records for systems manufactured after this date.
-Production almost certainly continued beyond {date_end.year} — this analysis only reflects what our
-collected instrument data can show. Any conclusions about current or recent production rates
-should not be drawn from this dataset.
+<strong>Data cutoff:</strong> The most recent letter-prefix system in our dataset is <strong>{latest_lp_sn}</strong>
+(ordinal {latest_lp_ord:,}, installed {latest_lp_date}). We do not have iData records for systems
+manufactured after this date. Production almost certainly continued beyond {latest_lp_date.year} —
+this analysis only reflects what our collected instrument data can show. Any conclusions about
+current or recent production rates should not be drawn from this dataset.
 </div>
 
 <div class="two-era">
@@ -628,9 +634,10 @@ excluded from regression for the same reason.
       The true inflection may be slightly earlier or later than {bp_label}.</li>
   <li>Post-{bp_year} rate may overstate sustained production if the sample is biased toward
       recent systems (which are more likely to have iData on file).</li>
-  <li><strong>Data cutoff at {date_end}:</strong> Our iData collection does not extend beyond this date.
-      Hamilton almost certainly continued manufacturing STAR systems after {date_end.year}. This
-      analysis cannot speak to production volumes in {date_end.year + 1}–present.</li>
+  <li><strong>Data cutoff at {latest_lp_date}:</strong> Our letter-prefix iData collection does not extend
+      beyond this date. Hamilton almost certainly continued manufacturing STAR systems after
+      {latest_lp_date.year}. This analysis cannot speak to production volumes in
+      {latest_lp_date.year + 1}–present.</li>
 </ul>
 
 <!-- ============================================================ -->
@@ -647,10 +654,10 @@ for the letter-prefix series.
 
 <p><strong>What we know from this dataset:</strong></p>
 <ul>
-  <li>Our highest observed letter-prefix serial is <strong>H230</strong> (installed {date_end.strftime('%B %Y')})</li>
-  <li>Converting to ordinal: H = 7 (8th letter, zero-indexed) &times; 1,000 + 230 = <strong>7,230</strong></li>
-  <li>This means at least <strong>~7,230 letter-prefix STAR units</strong> had been produced by early {date_end.year}</li>
-  <li>At the post-inflection rate of ~{pw['slope_post']:.0f} units/year, an additional ~{pw['slope_post'] * (datetime.now().year - date_end.year):,.0f} units
+  <li>Our highest observed letter-prefix serial is <strong>{latest_lp_sn}</strong> (installed {latest_lp_date.strftime('%B %Y')})</li>
+  <li>Converting to ordinal: {latest_lp_sn[0]} = {ord(latest_lp_sn[0]) - ord('A')} (zero-indexed) &times; 1,000 + {int(latest_lp_sn[1:])} = <strong>{latest_lp_ord:,}</strong></li>
+  <li>This means at least <strong>~{latest_lp_ord:,} letter-prefix STAR units</strong> had been produced by early {latest_lp_date.year}</li>
+  <li>At the post-inflection rate of ~{pw['slope_post']:.0f} units/year, an additional ~{pw['slope_post'] * (datetime.now().year - latest_lp_date.year):,.0f} units
       may have been produced since then — but this is extrapolation, not confirmed</li>
 </ul>
 
