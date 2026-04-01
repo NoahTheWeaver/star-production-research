@@ -718,11 +718,12 @@ production run of at least several hundred units.
   <li><strong>Multiple PDFs per system:</strong> Where Pre/Post service records exist, installation dates
       are consistent across all PDFs for the same system.</li>
   <li><strong>"Installation date" vs. "Download date":</strong> Each iData PDF contains two dates.
-      The "Download date" is when firmware was flashed to the master board (typically at the factory).
-      The "Installation date" is when the system was commissioned at the customer site. For example,
-      H230 has a download date of 2021-12-08 and an installation date of 2022-02-02 — a ~2 month gap
-      representing factory-to-site lead time. This analysis uses installation date throughout; actual
-      manufacture dates are likely a few weeks to a couple months earlier than what is shown.</li>
+      The "Download date" records the most recent firmware download/update — <em>not</em> the original
+      manufacture date. In 69% of systems sampled, the download date is years after the installation
+      date (e.g., system 2082: installed 2007, download date 2025). The "Installation date" records
+      when the system was first commissioned and is the best available proxy for manufacture date.
+      Actual manufacture may precede installation by some amount (build, shipping, setup), but the
+      installation date is the most reliable field in the iData for tracking production timing.</li>
 </ul>
 
 <!-- ============================================================ -->
