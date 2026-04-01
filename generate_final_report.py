@@ -335,6 +335,19 @@ def generate_html(records, res):
           <td>{', '.join(sns)}</td>
         </tr>\n"""
 
+    # Serial format counts
+    fmt_counts = Counter(classify_serial(r["serial_number"]) for r in records)
+
+    # Production line mapping
+    def production_line(sn):
+        fmt = classify_serial(sn)
+        if fmt == "letter_prefix":
+            return "USA"
+        elif fmt == "numeric_4digit":
+            return "Swiss"
+        else:
+            return "Roche"
+
     # Data table
     table_rows = ""
     for r in records:
@@ -344,15 +357,51 @@ def generate_html(records, res):
         ordinal_str = str(ordinal) if ordinal is not None else "N/A"
         corrected = " *" if sn in DATE_CORRECTIONS else ""
         era = "pre" if r["installation_date"] < bp_date else "post"
+        line = production_line(sn)
         table_rows += f"""        <tr class="era-row-{era}">
           <td><strong>{sn}</strong></td>
           <td>{r["installation_date"].isoformat()}{corrected}</td>
-          <td>{fmt.replace('_', ' ')}</td>
+          <td>{line}</td>
           <td>{ordinal_str}</td>
         </tr>\n"""
 
-    # Serial format counts
-    fmt_counts = Counter(classify_serial(r["serial_number"]) for r in records)
+    # Per-line stats
+    line_records = defaultdict(list)
+    for r in records:
+        line_records[production_line(r["serial_number"])].append(r)
+
+    line_stats = {}
+    for line_name, recs in line_records.items():
+        dates_sorted = sorted(r["installation_date"] for r in recs)
+        sns_sorted = sorted(r["serial_number"] for r in recs)
+        # Compute max ordinal / implied units for each line
+        if line_name == "USA":
+            max_ord = max(serial_to_ordinal(r["serial_number"]) for r in recs)
+            implied = max_ord
+        elif line_name == "Swiss":
+            max_ord = max(int(r["serial_number"]) for r in recs)
+            implied = max_ord
+        else:  # Roche — 3 digits + letter, harder to compute total
+            # Extract numeric portions; treat as sequential within their scheme
+            nums = sorted(int(r["serial_number"][:3]) for r in recs if r["serial_number"][:3].isdigit())
+            max_ord = max(nums) if nums else 0
+            implied = max_ord  # lower-bound estimate
+        line_stats[line_name] = {
+            "count": len(recs),
+            "date_min": dates_sorted[0],
+            "date_max": dates_sorted[-1],
+            "serials": sns_sorted,
+            "max_ordinal": max_ord,
+            "implied_units": implied,
+        }
+
+    total_implied = sum(ls["implied_units"] for ls in line_stats.values())
+
+    # Convenience refs for template
+    ls_usa = line_stats["USA"]
+    ls_swiss = line_stats["Swiss"]
+    ls_roche = line_stats["Roche"]
+    swiss_max_sn = max(r["serial_number"] for r in line_records["Swiss"])
 
     # Compute implied units per era
     lp_records = [r for r in records if classify_serial(r["serial_number"]) == "letter_prefix"]
@@ -445,8 +494,8 @@ def generate_html(records, res):
 
 <div class="kpi-grid">
   <div class="kpi">
-    <div class="value">~{pre_span + post_span:,}</div>
-    <div class="label">Implied total units manufactured (letter-prefix serial range)</div>
+    <div class="value">~{total_implied:,}+</div>
+    <div class="label">Implied total units manufactured (all three lines combined, as of data cutoff)</div>
   </div>
   <div class="kpi">
     <div class="value">{len(records)}</div>
@@ -457,6 +506,22 @@ def generate_html(records, res):
     <div class="label">Date range covered ({date_start} to {date_end})</div>
   </div>
 </div>
+
+<table>
+  <thead>
+    <tr><th>Production Line</th><th>Highest Serial Observed</th><th>Implied Units (minimum)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>USA</strong> (letter + 3 digits)</td><td>{latest_lp_sn} (ordinal {latest_lp_ord:,})</td><td><strong>~{line_stats['USA']['implied_units']:,}</strong></td></tr>
+    <tr><td><strong>Swiss</strong> (4 numeric digits)</td><td>{max(r['serial_number'] for r in line_records['Swiss'])}</td><td><strong>~{line_stats['Swiss']['implied_units']:,}</strong></td></tr>
+    <tr><td><strong>Roche</strong> (3 digits + letter)</td><td>{line_stats['Roche']['serials'][-1]}</td><td><strong>~{line_stats['Roche']['implied_units']:,}</strong></td></tr>
+    <tr style="background:#E8F5E9; font-weight:bold;"><td>Combined Total</td><td></td><td>~{total_implied:,}+</td></tr>
+  </tbody>
+</table>
+
+<p style="font-size:13px; color:#666;">These are minimum estimates based on the highest serial number observed in each line.
+Actual totals are likely higher — our data cuts off at {latest_lp_date.year} and does not include
+systems manufactured since then.</p>
 
 <div class="note">
 <strong>Data cutoff:</strong> The most recent letter-prefix system in our dataset is <strong>{latest_lp_sn}</strong>
@@ -484,11 +549,12 @@ current or recent production rates should not be drawn from this dataset.
 </div>
 
 <!-- ============================================================ -->
-<h2>Production Over Time</h2>
+<h2>Production Over Time (USA Line)</h2>
 
 <div class="scatter-container">
   <img src="production_scatter.png" alt="Serial Number vs. Manufacture Date — Piecewise Linear Fit">
-  <div class="caption">Figure 1: Each dot is one observed system. The blue dashed line shows the pre-{bp_label} trend (~{pw['slope_pre']:.0f}/yr);
+  <div class="caption">Figure 1: USA-line systems only (letter + 3 digit serials). Swiss and Roche systems are excluded.
+  The blue dashed line shows the pre-{bp_label} trend (~{pw['slope_pre']:.0f}/yr);
   the orange dashed line shows the post-{bp_label} trend (~{pw['slope_post']:.0f}/yr). Vertical red line marks the inflection point.</div>
 </div>
 
@@ -564,22 +630,55 @@ normal year-to-year variation. It represents a fundamental shift in production v
 </div>
 
 <!-- ============================================================ -->
-<h2>Serial Number Format Analysis</h2>
+<h2>Three Production Lines</h2>
 
-<p>Four serial number formats were observed:</p>
-<ul>
-  <li><strong>Letter + 3 digits</strong> (e.g., A142, D777, H230): {fmt_counts.get('letter_prefix', 0)} systems — primary modern format, used for regression analysis</li>
-  <li><strong>Pure numeric</strong> (e.g., 1413, 5130, 7109): {fmt_counts.get('numeric_4digit', 0)} systems — older/parallel numbering scheme</li>
-  <li><strong>3 digits + letter</strong> (e.g., 293H, 354H): {fmt_counts.get('digit_prefix_letter_suffix', 0)} systems — variant format</li>
-  <li><strong>Other</strong> (e.g., 177D): {fmt_counts.get('other', 0)} system</li>
-</ul>
+<p>Hamilton manufactured the Microlab STAR across <strong>three distinct production lines</strong>,
+each with its own serial number format:</p>
+
+<table>
+  <thead>
+    <tr><th>Production Line</th><th>Serial Format</th><th>Example</th><th>Systems in Sample</th><th>Date Range</th><th>Serials Observed</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Swiss</strong> (Switzerland)</td>
+      <td>4 numeric digits</td>
+      <td>1234</td>
+      <td>{ls_swiss['count']}</td>
+      <td>{ls_swiss['date_min']} to {ls_swiss['date_max']}</td>
+      <td>{', '.join(ls_swiss['serials'])}</td>
+    </tr>
+    <tr style="background: #E8F5E9;">
+      <td><strong>USA</strong></td>
+      <td>Letter + 3 digits</td>
+      <td>A123</td>
+      <td>{ls_usa['count']}</td>
+      <td>{ls_usa['date_min']} to {ls_usa['date_max']}</td>
+      <td>{ls_usa['serials'][0]} ... {ls_usa['serials'][-1]}</td>
+    </tr>
+    <tr>
+      <td><strong>Roche</strong></td>
+      <td>3 digits + letter</td>
+      <td>123A</td>
+      <td>{ls_roche['count']}</td>
+      <td>{ls_roche['date_min']} to {ls_roche['date_max']}</td>
+      <td>{', '.join(ls_roche['serials'])}</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Each production line maintains its own independent, sequential serial numbering. This means
+<strong>total STAR production is the sum of all three lines</strong>, not just the USA line analyzed above.</p>
 
 <div class="note">
-<strong>Note on numeric serials:</strong> The 6 pure-numeric serials (1413, 1959, 2082, 2820, 5130, 7109)
-do not follow the letter-prefix ordinal scheme and appear to represent a separate or legacy numbering
-system. They were <strong>excluded from the regression analysis</strong> to avoid distortion, though they
-are included in the full data table below. The variant formats (293H, 324G, 354H, 177D) were also
-excluded from regression for the same reason.
+<strong>Analysis scope:</strong> The production rate analysis (piecewise model, Era 1/Era 2) is based on
+the <strong>USA line only</strong> ({ls_usa['count']} systems), which has the largest sample and cleanest
+sequential progression in our data. The Swiss and Roche lines are represented by only
+{ls_swiss['count']} and {ls_roche['count']} systems respectively —
+too few data points to model their production rates independently, but their serial numbers contribute
+to the overall production count. The highest Swiss serial observed is <strong>{ls_swiss['serials'][-1]}</strong>
+({int(ls_swiss['serials'][-1]):,} units implied), and Roche serials suggest a separate
+production run of at least several hundred units.
 </div>
 
 <!-- ============================================================ -->
@@ -600,7 +699,7 @@ excluded from regression for the same reason.
 
 <table>
   <thead>
-    <tr><th>Serial Number</th><th>Installation Date</th><th>Format</th><th>Ordinal</th></tr>
+    <tr><th>Serial Number</th><th>Installation Date</th><th>Production Line</th><th>Ordinal</th></tr>
   </thead>
   <tbody>
 {table_rows}  </tbody>
@@ -647,27 +746,58 @@ excluded from regression for the same reason.
 makes it possible to determine <strong>exact total production</strong> with a single data point.</p>
 
 <div class="methodology">
-<strong>Key insight:</strong> Because Hamilton assigns Microlab STAR serial numbers sequentially,
-the serial number on the most recently manufactured system <em>is</em> the total production count
-for the letter-prefix series.
+<strong>Key insight:</strong> Because each production line assigns serial numbers sequentially,
+the highest serial number on the most recently manufactured system from each line <em>is</em>
+that line's total production count. Sum all three lines to get overall STAR production.
 </div>
 
-<p><strong>What we know from this dataset:</strong></p>
-<ul>
-  <li>Our highest observed letter-prefix serial is <strong>{latest_lp_sn}</strong> (installed {latest_lp_date.strftime('%B %Y')})</li>
-  <li>Converting to ordinal: {latest_lp_sn[0]} = {ord(latest_lp_sn[0]) - ord('A')} (zero-indexed) &times; 1,000 + {int(latest_lp_sn[1:])} = <strong>{latest_lp_ord:,}</strong></li>
-  <li>This means at least <strong>~{latest_lp_ord:,} letter-prefix STAR units</strong> had been produced by early {latest_lp_date.year}</li>
-  <li>At the post-inflection rate of ~{pw['slope_post']:.0f} units/year, an additional ~{pw['slope_post'] * (datetime.now().year - latest_lp_date.year):,.0f} units
-      may have been produced since then — but this is extrapolation, not confirmed</li>
-</ul>
+<p><strong>What we know from this dataset (as of data cutoff):</strong></p>
 
-<p><strong>How to get the definitive number:</strong></p>
+<table>
+  <thead>
+    <tr><th>Production Line</th><th>Highest Serial</th><th>Implied Minimum Units</th><th>How to Read</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>USA</strong></td>
+      <td>{latest_lp_sn} ({latest_lp_date.strftime('%B %Y')})</td>
+      <td><strong>~{line_stats['USA']['implied_units']:,}</strong></td>
+      <td>{latest_lp_sn[0]} = {ord(latest_lp_sn[0]) - ord('A')} &times; 1,000 + {int(latest_lp_sn[1:])} = {latest_lp_ord:,}</td>
+    </tr>
+    <tr>
+      <td><strong>Swiss</strong></td>
+      <td>{line_stats['Swiss']['serials'][-1]} ({line_stats['Swiss']['date_max'].strftime('%B %Y')})</td>
+      <td><strong>~{line_stats['Swiss']['implied_units']:,}</strong></td>
+      <td>Serial number is the ordinal directly</td>
+    </tr>
+    <tr>
+      <td><strong>Roche</strong></td>
+      <td>{line_stats['Roche']['serials'][-1]} ({line_stats['Roche']['date_max'].strftime('%B %Y')})</td>
+      <td><strong>~{line_stats['Roche']['implied_units']:,}</strong></td>
+      <td>Leading digits = ordinal (letter indicates sub-series or region)</td>
+    </tr>
+    <tr style="background:#E8F5E9; font-weight:bold;">
+      <td>Combined (as of data cutoff)</td>
+      <td></td>
+      <td>~{total_implied:,}+</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>These are <strong>minimum estimates</strong> — our data ends in {latest_lp_date.year}. At the USA line's
+post-inflection rate of ~{pw['slope_post']:.0f} units/year alone, an additional ~{pw['slope_post'] * (datetime.now().year - latest_lp_date.year):,.0f}
+USA-line units may have been produced since then. Swiss and Roche lines may have continued as well.</p>
+
+<p><strong>How to get definitive current totals:</strong></p>
 <ul>
-  <li>Find the serial number on <strong>any recently shipped or installed</strong> Hamilton Microlab STAR</li>
-  <li>The serial will be in the format <em>Letter + 3 digits</em> (e.g., J450, K112)</li>
-  <li>Convert the letter to its zero-indexed position: A=0, B=1, C=2, D=3, E=4, F=5, G=6, H=7, I=8, J=9, K=10, etc.</li>
-  <li>Multiply by 1,000 and add the three-digit number</li>
-  <li>Example: a serial of <strong>J450</strong> would mean 9 &times; 1,000 + 450 = <strong>9,450 total units produced</strong></li>
+  <li>For each production line, find the serial number on the <strong>most recently manufactured</strong> system</li>
+  <li><strong>USA line:</strong> Serial format is letter + 3 digits (e.g., J450). Convert the letter to its
+      zero-indexed position (A=0, B=1, ... H=7, I=8, J=9, K=10, ...), multiply by 1,000, add the
+      digits. Example: J450 = 9 &times; 1,000 + 450 = <strong>9,450 total USA units</strong></li>
+  <li><strong>Swiss line:</strong> Serial is a plain number (e.g., 8200). That number <em>is</em> the unit count</li>
+  <li><strong>Roche line:</strong> Leading 3 digits are the sequential number within that sub-series</li>
+  <li>Sum all three for total global STAR production</li>
 </ul>
 
 <p><strong>Where to look:</strong></p>
@@ -675,10 +805,8 @@ for the letter-prefix series.
   <li>The iData report for any system (Master section &rarr; "Serial number instrument")</li>
   <li>The physical nameplate/label on the instrument itself</li>
   <li>Hamilton's service or sales records, if accessible</li>
-  <li>A Hamilton field service engineer may be able to confirm the latest serial they've seen</li>
+  <li>A Hamilton field service engineer may be able to confirm the latest serial they've seen from each line</li>
 </ul>
-
-<p>This approach bypasses all modeling and extrapolation — one serial number gives the answer directly.</p>
 
 <div class="footer">
   <p>Analysis performed {datetime.now().strftime('%Y-%m-%d')}. Source: Hamilton iData instrument PDFs
