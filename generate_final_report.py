@@ -452,6 +452,14 @@ def generate_html(records, res):
   </div>
 </div>
 
+<div class="note">
+<strong>Data cutoff:</strong> The most recent system in our dataset was installed <strong>{date_end}</strong>
+(serial {records[-1]['serial_number']}). We do not have iData records for systems manufactured after this date.
+Production almost certainly continued beyond {date_end.year} — this analysis only reflects what our
+collected instrument data can show. Any conclusions about current or recent production rates
+should not be drawn from this dataset.
+</div>
+
 <div class="two-era">
   <div class="era-box pre">
     <h3 style="color:#1565C0;">Era 1: Pre-{bp_label}</h3>
@@ -620,6 +628,9 @@ excluded from regression for the same reason.
       The true inflection may be slightly earlier or later than {bp_label}.</li>
   <li>Post-{bp_year} rate may overstate sustained production if the sample is biased toward
       recent systems (which are more likely to have iData on file).</li>
+  <li><strong>Data cutoff at {date_end}:</strong> Our iData collection does not extend beyond this date.
+      Hamilton almost certainly continued manufacturing STAR systems after {date_end.year}. This
+      analysis cannot speak to production volumes in {date_end.year + 1}–present.</li>
 </ul>
 
 <div class="footer">
